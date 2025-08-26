@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>List Prioritiser</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea { width: 100%; height: 200px; }
+    button { padding: 10px 20px; margin-top: 10px; }
+    #comparison { margin-top: 20px; display: none; }
+    #comparison button { margin: 10px; padding: 10px 20px; }
+    #result { margin-top: 20px; white-space: pre-line; }
+  </style>
+</head>
+<body>
+  <h1>List Prioritiser</h1>
+  <textarea id="inputList" placeholder="Enter one item per line..."></textarea><br>
+  <button onclick="startPrioritisation()">Prioritise</button>
+
+  <div id="comparison">
+    <p>Which item should come first?</p>
+    <button id="optionA"></button>
+    <button id="optionB"></button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    let items = [];
+    let comparisons = [];
+
+    function startPrioritisation() {
+      const text = document.getElementById("inputList").value.trim();
+      if (!text) return;
+      items = text.split(/\n/).map(s => s.trim()).filter(s => s.length);
+      comparisons = [];
+      quickSort(items, 0, items.length - 1, () => {
+        document.getElementById("result").innerText = "Sorted list:\n" + items.join("\n");
+        document.getElementById("comparison").style.display = "none";
+      });
+    }
+
+    function quickSort(arr, left, right, done) {
+      if (left >= right) return done();
+
+      partition(arr, left, right, pivotIndex => {
+        quickSort(arr, left, pivotIndex - 1, () => {
+          quickSort(arr, pivotIndex + 1, right, done);
+        });
+      });
+    }
+
+    function partition(arr, left, right, callback) {
+      const pivot = arr[right];
+      let i = left;
+
+      function step(j) {
+        if (j >= right) {
+          [arr[i], arr[right]] = [arr[right], arr[i]];
+          return callback(i);
+        }
+        compare(arr[j], pivot, result => {
+          if (result < 0) {
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+            i++;
+          }
+          step(j + 1);
+        });
+      }
+      step(left);
+    }
+
+    function compare(a, b, callback) {
+      const compDiv = document.getElementById("comparison");
+      compDiv.style.display = "block";
+
+      document.getElementById("optionA").textContent = a;
+      document.getElementById("optionB").textContent = b;
+
+      document.getElementById("optionA").onclick = () => {
+        compDiv.style.display = "none";
+        callback(-1); // a < b
+      };
+      document.getElementById("optionB").onclick = () => {
+        compDiv.style.display = "none";
+        callback(1); // b < a
+      };
+    }
+  </script>
+</body>
+</html>

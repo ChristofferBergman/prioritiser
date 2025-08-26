@@ -4,38 +4,108 @@
   <meta charset="UTF-8">
   <title>List Prioritiser</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    textarea { width: 100%; height: 200px; }
-    button { padding: 10px 20px; margin-top: 10px; }
-    #comparison { margin-top: 20px; display: none; }
-    #comparison button { margin: 10px; padding: 10px 20px; }
-    #result { margin-top: 20px; white-space: pre-line; }
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 0; 
+      padding: 0; 
+      background: #f0f4f8; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 500px;
+      max-width: 90%;
+    }
+    textarea { 
+      width: 100%; 
+      height: 200px; 
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 14px;
+    }
+    button { 
+      padding: 10px 20px; 
+      margin-top: 15px; 
+      border: none;
+      border-radius: 8px;
+      background: #4a90e2;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background: #357ab8;
+    }
+    #comparison { 
+      margin-top: 20px; 
+      display: none; 
+    }
+    #comparison p {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    #comparison button { 
+      margin: 10px; 
+      padding: 15px 25px; 
+      font-size: 16px;
+      border-radius: 10px;
+      background: #6c63ff;
+    }
+    #comparison button:hover {
+      background: #574edc;
+    }
+    #result { 
+      margin-top: 20px; 
+      white-space: pre-line; 
+      font-size: 16px;
+      text-align: left;
+      background: #f9fafc;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+    }
   </style>
 </head>
 <body>
-  <h1>List Prioritiser</h1>
-  <textarea id="inputList" placeholder="Enter one item per line..."></textarea><br>
-  <button onclick="startPrioritisation()">Prioritise</button>
+  <div class="container">
+    <h1>List Prioritiser</h1>
+    <div id="inputSection">
+      <textarea id="inputList" placeholder="Enter one item per line..."></textarea><br>
+      <button onclick="startPrioritisation()">Prioritise</button>
+    </div>
 
-  <div id="comparison">
-    <p>Which item should come first?</p>
-    <button id="optionA"></button>
-    <button id="optionB"></button>
+    <div id="comparison">
+      <p>Which item should come first?</p>
+      <button id="optionA"></button>
+      <button id="optionB"></button>
+    </div>
+
+    <div id="result"></div>
   </div>
-
-  <div id="result"></div>
 
   <script>
     let items = [];
-    let comparisons = [];
 
     function startPrioritisation() {
       const text = document.getElementById("inputList").value.trim();
       if (!text) return;
       items = text.split(/\n/).map(s => s.trim()).filter(s => s.length);
-      comparisons = [];
+
+      document.getElementById("inputSection").style.display = "none";
+      document.getElementById("result").style.display = "none";
+
       quickSort(items, 0, items.length - 1, () => {
         document.getElementById("result").innerText = "Sorted list:\n" + items.join("\n");
+        document.getElementById("result").style.display = "block";
         document.getElementById("comparison").style.display = "none";
       });
     }
@@ -79,11 +149,11 @@
 
       document.getElementById("optionA").onclick = () => {
         compDiv.style.display = "none";
-        callback(-1); // a < b
+        callback(-1);
       };
       document.getElementById("optionB").onclick = () => {
         compDiv.style.display = "none";
-        callback(1); // b < a
+        callback(1);
       };
     }
   </script>
